@@ -326,7 +326,7 @@
     <canvas id="spaceCanvas"></canvas>
 
     <!-- REPRODUCTOR DE AUDIO LOCAL -->
-   <audio id="bgMusic" src="https://drive.google.com/file/d/1fNb89wSyuEXguRbWk2xWJcqPYe4yJXy9/view?usp=drive_link" preload="auto" loop playsinline></audio>
+<audio id="bgMusic" src="Terli.mp3" preload="auto" loop playsinline></audio>
     
     <!-- FOTO CUADRADA FLOTANDO CON EFECTO SUPERNOVA -->
     <div class="memory-photo-container" id="memoryPhoto">
@@ -534,26 +534,30 @@
         }
 
        const handleStart = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            introOverlay.classList.add('hidden');
-            tapHint.style.display = 'block';
-            isStarted = true;
-            currentStage = 'orbiting';
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    introOverlay.classList.add('hidden');
+    tapHint.style.display = 'block';
+    isStarted = true;
+    currentStage = 'orbiting';
 
-            const audio = document.getElementById('bgMusic');
-            
-            // Forzar carga y reproducción para móviles
-            audio.currentTime = 0;
-            audio.load();
-            
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Audio autoplay prevented:", error);
-                });
-            }
-        };
+    const audio = document.getElementById('bgMusic');
+    if (audio) {
+        audio.currentTime = 0;
+        // Se ejecuta la promesa de reproducción
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log("Audio reproduciendo con éxito");
+            }).catch(error => {
+                console.log("Error al reproducir audio:", error);
+            });
+        }
+    }
+};
 
         startBtn.addEventListener('touchstart', handleStart, { passive: false });
         startBtn.addEventListener('click', handleStart);
