@@ -533,7 +533,7 @@
             }, 3000);
         }
 
-        const handleStart = (e) => {
+       const handleStart = (e) => {
             e.preventDefault();
             e.stopPropagation();
             introOverlay.classList.add('hidden');
@@ -542,9 +542,17 @@
             currentStage = 'orbiting';
 
             const audio = document.getElementById('bgMusic');
-            audio.play().catch(error => {
-                console.log("Audio autoplay prevented:", error);
-            });
+            
+            // Forzar carga y reproducción para móviles
+            audio.currentTime = 0;
+            audio.load();
+            
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Audio autoplay prevented:", error);
+                });
+            }
         };
 
         startBtn.addEventListener('touchstart', handleStart, { passive: false });
