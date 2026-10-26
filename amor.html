@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Para Terli ✨</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            height: -webkit-fill-available;
+            overflow: hidden;
+            background-color: #020208;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            display: block;
+        }
+
+        /* PANTALLA INICIAL DE BIENVENIDA */
+        .intro-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            background: rgba(2, 2, 8, 0.88);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .intro-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .intro-title {
+            font-size: clamp(1.1rem, 4.5vw, 1.5rem);
+            font-weight: 300;
+            color: #f1f5f9;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .intro-name {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(3.5rem, 14vw, 5.5rem);
+            color: #ffb7c5;
+            text-shadow: 0 0 25px rgba(255, 105, 180, 0.8);
+            margin-bottom: 6px;
+        }
+
+        .intro-subtext-top {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            font-weight: 300;
+            margin-bottom: 28px;
+            letter-spacing: 0.5px;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #ff8da1 0%, #e05279 100%);
+            color: #ffffff;
+            border: none;
+            padding: 14px 38px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            letter-spacing: 1px;
+        }
+
+        .start-btn:active {
+            transform: scale(0.92);
+        }
+
+        .intro-subtext-bottom {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 22px;
+            font-weight: 300;
+            max-width: 280px;
+            line-height: 1.4;
+        }
+
+        /* CONTENEDOR DE TEXTOS CENTRADO */
+        .text-container {
+            position: absolute;
+            top: 10vh;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 88%;
+            max-width: 600px;
+            text-align: center;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phrase {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(1.15rem, 4.5vw, 1.75rem);
+            font-weight: 300;
+            line-height: 1.55;
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.7),
+                         0 0 25px rgba(255, 182, 193, 0.5);
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phrase.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .sub-text {
+            display: block;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            color: #ffc0cb;
+            margin-top: 6px;
+            font-weight: 300;
+            opacity: 0.95;
+            text-shadow: 0 0 10px rgba(255, 182, 193, 0.6);
+            text-align: center;
+        }
+
+        .sub-text-name {
+            display: block;
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.5rem;
+            color: #ffb7c5;
+            margin-top: 4px;
+            text-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+            text-align: center;
+        }
+
+        .sub-text-signature {
+            display: block;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.5rem;
+            color: rgba(255, 192, 203, 0.9);
+            margin-top: 6px;
+            letter-spacing: 1px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
+        }
+
+        /* FOTO CUADRADA CON EFECTO SUPERNOVA */
+        .memory-photo-container {
+            position: absolute;
+            top: 180px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            width: 110px;
+            height: 110px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 182, 193, 0.85);
+            box-shadow: 0 0 25px rgba(255, 105, 180, 0.7),
+                        0 0 50px rgba(186, 85, 211, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 12;
+            opacity: 0;
+            transition: transform 1.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease, box-shadow 1s ease;
+        }
+
+        .memory-photo-container.visible {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+            box-shadow: 0 0 45px rgba(255, 255, 255, 0.9), 0 0 80px rgba(255, 105, 180, 0.8);
+            animation: floatPhoto 3.5s ease-in-out infinite alternate;
+        }
+
+        .memory-photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes floatPhoto {
+            0% { transform: translateX(-50%) translateY(0) scale(1) rotate(-1deg); }
+            100% { transform: translateX(-50%) translateY(-6px) scale(1.03) rotate(1deg); }
+        }
+
+        /* CAPA DE LAS 8 ESTRELLAS */
+        .interactive-stars-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 15;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .interactive-stars-layer.visible {
+            opacity: 1;
+        }
+
+        .star-item {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+        }
+
+        .star-item::before {
+            content: '★';
+            font-size: 1.6rem;
+            color: #ffffff;
+            text-shadow: 0 0 10px #ff8da1, 0 0 20px #ffb7c5;
+            animation: starPulse 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes starPulse {
+            0% { transform: scale(0.85); opacity: 0.75; }
+            100% { transform: scale(1.25); opacity: 1; filter: drop-shadow(0 0 8px #ff69b4); }
+        }
+
+        .message-toast {
+            position: absolute;
+            bottom: 75px;
+            left: 50%;
+            transform: translateX(-50%) translateY(15px);
+            background: rgba(255, 182, 193, 0.22);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 182, 193, 0.5);
+            padding: 12px 20px;
+            border-radius: 20px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 400;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(255, 105, 180, 0.35);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 18;
+            width: 86%;
+            max-width: 380px;
+        }
+
+        .message-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .tap-hint {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.45);
+            pointer-events: none;
+            animation: pulseHint 2s infinite alternate;
+        }
+
+        @keyframes pulseHint {
+            0% { opacity: 0.2; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0.75; transform: translateX(-50%) translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="spaceCanvas"></canvas>
+
+    <!-- REPRODUCTOR DE AUDIO LOCAL -->
+    <audio id="bgMusic" src="Terli.mp3" preload="auto" loop></audio>
+
+    <!-- FOTO CUADRADA FLOTANDO CON EFECTO SUPERNOVA -->
+    <div class="memory-photo-container" id="memoryPhoto">
+    <img src="Terli1.jpeg" alt="Para Terli">
+</div>
+
+    <!-- PANTALLA DE INICIO -->
+    <div class="intro-overlay" id="introOverlay">
+        <p class="intro-title">Antes de nosotros...<br>ya existía todo un universo.</p>
+        <h1 class="intro-name">Terli</h1>
+        <p class="intro-subtext-top">quiero mostrarte algo</p>
+        <button class="start-btn" id="startBtn">Empezar ✨</button>
+        <p class="intro-subtext-bottom">Un pequeño universo, una coincidencia irrepetible 💕</p>
+    </div>
+
+    <!-- CONTENEDOR DE FRASES -->
+    <div class="text-container">
+        <p class="phrase active">Hubo un tiempo en el que tú y yo...</p>
+        <p class="phrase">Éramos dos historias que todavía no se conocían.</p>
+        <p class="phrase">Vivimos días distintos.</p>
+        <p class="phrase">Conocimos lugares distintos.</p>
+        <p class="phrase">Guardamos recuerdos distintos.</p>
+        <p class="phrase">Y durante mucho tiempo...</p>
+        <p class="phrase">Nuestros caminos ni siquiera sabían que iban a encontrarse.</p>
+        <p class="phrase">Entre millones de decisiones..</p>
+        <p class="phrase">millones de lugares..</p>
+        <p class="phrase">y millones de momentos..</p>
+        <p class="phrase">bastaba una pequeña diferencia para no coincidir.</p>
+        <p class="phrase">Y aún así...</p>
+        <p class="phrase">entre todas esas posibilidades..</p>
+        <p class="phrase">coincidimos ✨</p>
+        <p class="phrase">Y desde entonces...</p>
+        <p class="phrase">mi universo tiene un lugar que antes no existía.</p>
+        <p class="phrase">Nosotros 💕</p>
+        <p class="phrase">Si alguien me preguntara dónde está mi lugar favorito del universo..</p>
+        <p class="phrase">No señalaría las estrellas..</p>
+        <p class="phrase">Te señalaría a ti <span class="sub-text-name">Terli</span></p>
+        <p class="phrase" id="starsPhrase">Hay cosas que brillan diferente ✨ <span class="sub-text">Toca una estrella, guarda un instante</span></p>
+        <p class="phrase">Dicen que el universo es inmenso.</p>
+        <p class="phrase">Y probablemente tengan razón.</p>
+        <p class="phrase">Pero desde que te encontré..</p>
+        <p class="phrase">ya no me parece tan grande.</p>
+        <p class="phrase">Porque sé exactamente dónde quiero estar.</p>
+        <p class="phrase">Entre miles de millones de estrellas..</p>
+        <p class="phrase">entre millones de lugares...</p>
+        <p class="phrase">entre todas las historias que pudieron existir..</p>
+        <p class="phrase">mi coincidencia favorita..</p>
+        <p class="phrase">
+            Fue encontrarte a ti 
+            <span class="sub-text">Para mi Mujer Terli</span>
+            <span class="sub-text-signature">con mucho amor, Anthony 💕</span>
+        </p>
+    </div>
+
+    <!-- CAPA DE 8 ESTRELLAS -->
+    <div class="interactive-stars-layer" id="starsLayer"></div>
+
+    <!-- NOTIFICACIÓN DE MENSAJE -->
+    <div class="message-toast" id="messageToast"></div>
+
+    <div class="tap-hint" id="tapHint" style="display: none;">Toca la pantalla ✨</div>
+
+    <script>
+        const canvas = document.getElementById('spaceCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            ctx.scale(dpr, dpr);
+            
+            if (starsLayer.classList.contains('visible')) {
+                createInteractiveStars();
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('orientationchange', resizeCanvas);
+
+        const introOverlay = document.getElementById('introOverlay');
+        const startBtn = document.getElementById('startBtn');
+        const tapHint = document.getElementById('tapHint');
+        const phrases = document.querySelectorAll('.phrase');
+        const starsLayer = document.getElementById('starsLayer');
+        const messageToast = document.getElementById('messageToast');
+        const memoryPhoto = document.getElementById('memoryPhoto');
+
+        let currentPhraseIndex = 0;
+        let isStarted = false;
+        let currentStage = 'stars';
+
+        // 1. Estrellas de fondo con brillo pulsante
+        const backgroundStars = [];
+        const numStars = 320;
+        
+        function initStars() {
+            backgroundStars.length = 0;
+            for (let i = 0; i < numStars; i++) {
+                backgroundStars.push({
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    radius: Math.random() * 1.5 + 0.3,
+                    alpha: Math.random() * 0.8 + 0.2,
+                    speed: Math.random() * 0.03 + 0.01,
+                    glowColor: Math.random() > 0.5 ? '#ffb7c5' : '#ffffff'
+                });
+            }
+        }
+
+        // 2. Partículas en forma de Corazones Flotantes
+        const heartParticles = [];
+        const numHearts = 35;
+
+        function initHearts() {
+            heartParticles.length = 0;
+            for (let i = 0; i < numHearts; i++) {
+                heartParticles.push({
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    size: Math.random() * 6 + 4,
+                    speedY: Math.random() * 0.6 + 0.2,
+                    alpha: Math.random() * 0.6 + 0.2,
+                    pulseSpeed: Math.random() * 0.02 + 0.01
+                });
+            }
+        }
+
+        initStars();
+        initHearts();
+        resizeCanvas();
+
+        let starA = { angle: 0, radius: 130, x: 0, y: 0 };
+        let starB = { angle: Math.PI, radius: 130, x: 0, y: 0 };
+        let orbitSpeed = 0.035;
+
+        const galaxyParticles = [];
+        const numGalaxyParticles = 420;
+        let galaxyAlpha = 0;
+
+        for (let i = 0; i < numGalaxyParticles; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const maxRadius = Math.min(window.innerWidth, window.innerHeight) * 0.42;
+            const dist = Math.pow(Math.random(), 2) * maxRadius;
+            galaxyParticles.push({
+                angle: angle,
+                dist: dist,
+                speed: (0.002 + Math.random() * 0.0025) * (dist < 60 ? 1.4 : 1),
+                size: Math.random() * 1.8 + 0.4,
+                color: Math.random() > 0.45 ? '#ffb7c5' : (Math.random() > 0.5 ? '#e0aaff' : '#ffffff')
+            });
+        }
+
+        const starMessages = [
+            "1. La tranquilidad de estar contigo.",
+            "2. Tus ojos",
+            "3. Cada recuerdo que aún nos falta crear",
+            "4. Cada conversación que no quiero terminar",
+            "5. Tu forma de hacer mis días tan especiales",
+            "6. Tu sonrisa",
+            "7. Simplemente tú",
+            "8. Tus labios"
+        ];
+
+        function createInteractiveStars() {
+            starsLayer.innerHTML = '';
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight * 0.60;
+            const radiusX = Math.min(window.innerWidth * 0.38, 160);
+            const radiusY = Math.min(window.innerHeight * 0.22, 130);
+
+            starMessages.forEach((msg, index) => {
+                const angle = (index / starMessages.length) * Math.PI * 2 - Math.PI / 2;
+                const x = centerX + Math.cos(angle) * radiusX;
+                const y = centerY + Math.sin(angle) * radiusY;
+
+                const starEl = document.createElement('div');
+                starEl.className = 'star-item';
+                starEl.style.left = `${x}px`;
+                starEl.style.top = `${y}px`;
+
+                const handleStarTap = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (navigator.vibrate) {
+                        navigator.vibrate(40);
+                    }
+                    showToast(msg);
+                };
+
+                starEl.addEventListener('touchstart', handleStarTap, { passive: false });
+                starEl.addEventListener('click', handleStarTap);
+
+                starsLayer.appendChild(starEl);
+            });
+        }
+
+        let toastTimeout;
+        function showToast(text) {
+            messageToast.textContent = text;
+            messageToast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                messageToast.classList.remove('show');
+            }, 3000);
+        }
+
+        const handleStart = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            introOverlay.classList.add('hidden');
+            tapHint.style.display = 'block';
+            isStarted = true;
+            currentStage = 'orbiting';
+
+            const audio = document.getElementById('bgMusic');
+            audio.play().catch(error => {
+                console.log("Audio autoplay prevented:", error);
+            });
+        };
+
+        startBtn.addEventListener('touchstart', handleStart, { passive: false });
+        startBtn.addEventListener('click', handleStart);
+
+        const handleScreenTap = () => {
+            if (!isStarted) return;
+
+            if (currentPhraseIndex < phrases.length - 1) {
+                phrases[currentPhraseIndex].classList.remove('active');
+                currentPhraseIndex++;
+                phrases[currentPhraseIndex].classList.add('active');
+
+                const currentText = phrases[currentPhraseIndex].textContent;
+
+                if (currentText.includes('coincidimos')) {
+                    starA.radius = 2;
+                    memoryPhoto.classList.add('visible');
+                }
+
+                if (phrases[currentPhraseIndex].id === 'starsPhrase') {
+                    createInteractiveStars();
+                    starsLayer.classList.add('visible');
+                } else {
+                    starsLayer.classList.remove('visible');
+                    messageToast.classList.remove('show');
+                }
+
+                if (currentPhraseIndex === phrases.length - 1) {
+                    tapHint.style.display = 'none';
+                }
+            }
+        };
+
+        window.addEventListener('click', handleScreenTap);
+
+        // Función para dibujar corazones en Canvas
+        function drawHeart(x, y, size, color, alpha) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.globalAlpha = alpha;
+            const topCurveHeight = size * 0.3;
+            ctx.moveTo(x, y + topCurveHeight);
+            ctx.bezierCurveTo(x, y, x - size / 2, y, x - size / 2, y + topCurveHeight);
+            ctx.bezierCurveTo(x - size / 2, y + (size + topCurveHeight) / 2, x, y + size, x, y + size);
+            ctx.bezierCurveTo(x, y + size, x + size / 2, y + (size + topCurveHeight) / 2, x + size / 2, y + topCurveHeight);
+            ctx.bezierCurveTo(x + size / 2, y, x, y, x, y + topCurveHeight);
+            ctx.closePath();
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#ff69b4';
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function animate() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+
+            ctx.fillStyle = 'rgba(2, 2, 8, 0.22)';
+            ctx.fillRect(0, 0, w, h);
+
+            const centerX = w / 2;
+            const centerY = h * 0.60;
+
+            // Dibujar estrellas brillantes con efecto respiración
+            backgroundStars.forEach(s => {
+                s.alpha += Math.sin(Date.now() * s.speed) * 0.03;
+                const currentAlpha = Math.max(0.1, Math.min(1, Math.abs(s.alpha)));
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                ctx.fillStyle = s.glowColor;
+                ctx.shadowBlur = s.radius * 6;
+                ctx.shadowColor = s.glowColor;
+                ctx.globalAlpha = currentAlpha;
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // Dibujar corazones flotantes de fondo
+            heartParticles.forEach(hp => {
+                hp.y -= hp.speedY;
+                hp.alpha += Math.sin(Date.now() * hp.pulseSpeed) * 0.01;
+                if (hp.y < -20) {
+                    hp.y = h + 20;
+                    hp.x = Math.random() * w;
+                }
+                drawHeart(hp.x, hp.y, hp.size, '#ffb7c5', Math.abs(hp.alpha));
+            });
+
+            if (currentStage === 'orbiting') {
+                starA.angle += orbitSpeed;
+                starB.angle += orbitSpeed;
+
+                starA.x = centerX + Math.cos(starA.angle) * starA.radius;
+                starA.y = centerY + Math.sin(starA.angle) * starA.radius;
+
+                starB.x = centerX + Math.cos(starB.angle) * starB.radius;
+                starB.y = centerY + Math.sin(starB.angle) * starB.radius;
+
+                drawRealisticStar(starA.x, starA.y);
+                drawRealisticStar(starB.x, starB.y);
+
+                if (starA.radius <= 2) {
+                    currentStage = 'galaxy';
+                }
+            }
+
+            if (currentStage === 'galaxy') {
+                if (galaxyAlpha < 1) galaxyAlpha += 0.015;
+
+                const grad = ctx.createRadialGradient(centerX, centerY, 4, centerX, centerY, 150);
+                grad.addColorStop(0, `rgba(255, 182, 193, ${0.45 * galaxyAlpha})`);
+                grad.addColorStop(0.5, `rgba(186, 85, 211, ${0.18 * galaxyAlpha})`);
+                grad.addColorStop(1, 'transparent');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 150, 0, Math.PI * 2);
+                ctx.fill();
+
+                galaxyParticles.forEach(p => {
+                    p.angle += p.speed;
+                    const x = centerX + Math.cos(p.angle) * p.dist;
+                    const y = centerY + Math.sin(p.angle) * p.dist * 0.48;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = galaxyAlpha * 0.85;
+                    ctx.shadowBlur = 6;
+                    ctx.shadowColor = p.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = 1;
+                });
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function drawRealisticStar(x, y) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#ffffff';
+            ctx.fill();
+            ctx.restore();
+        }
+
+        animate();
+    </script>
+</body>
+</html>
